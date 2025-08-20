@@ -10,7 +10,7 @@ public class WorkflowModel
 public class TriggerModel
 {
     public string ActivityType { get; set; } = "Start";
-    public string? Condition { get; set; }
+    public string Condition { get; set; } = "Always";
 }
 
 public class StepModel
