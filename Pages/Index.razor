@@ -4,7 +4,7 @@
 
 <MudPaper Class="pa-4">
     <MudTextField T="string" @bind-Value="_workflow.Name" Label="Workflow Name" Variant="Variant.Filled" Class="mb-2" />
-    <MudTextField T="string" @bind-Value="_workflow.Trigger.ActivityType" Label="Trigger" Variant="Variant.Filled" Class="mb-2" />
+    <MudSelect T="string" @bind-Value="_workflow.Trigger.ActivityType" Label="Trigger" Variant="Variant.Filled" Class="mb-2" Items="_triggerOptions" />
     <MudTextField T="string" @bind-Value="_workflow.Trigger.Condition" Label="Condition" Variant="Variant.Filled" Class="mb-4" />
 
     <MudDivider Class="mb-4" />
@@ -16,7 +16,7 @@
             <MudTh>Branches (IDs)</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd><MudTextField T="string" @bind-Value="context.ActivityType" /></MudTd>
+            <MudTd><MudSelect T="string" @bind-Value="context.ActivityType" Items="_activityOptions" /></MudTd>
             <MudTd><MudNumericField T="int?" @bind-Value="context.DelaySeconds" /></MudTd>
             <MudTd><MudTextField T="string" @bind-Value="context.Branches" /></MudTd>
         </RowTemplate>
@@ -32,6 +32,9 @@
     protected WorkflowModel _workflow = new();
 
     protected string? _json;
+
+    private readonly List<string> _triggerOptions = new() { "Start", "Schedule", "Signal" };
+    private readonly List<string> _activityOptions = new() { "WriteLine", "SendEmail", "Delay" };
 
     void AddStep() => _workflow.Steps.Add(new StepModel());
 
