@@ -9,7 +9,7 @@ A Blazor WebAssembly client application for building workflows in Elsa 3 JSON fo
 - Generate Elsa 3-like workflow JSON.
 
 ## Build
-Requires .NET 8 SDK.
+Requires .NET 7 SDK.
 
 ```bash
 dotnet restore
