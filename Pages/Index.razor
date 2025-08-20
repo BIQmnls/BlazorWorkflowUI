@@ -25,7 +25,7 @@
 
     <MudDivider Class="mb-4" />
     <MudButton OnClick="Generate" Variant="Variant.Filled" Color="Color.Secondary" Class="mb-2">Generate JSON</MudButton>
-    <MudTextArea T="string" Value="@_json" Lines="10" ReadOnly="true" Class="mt-2" />
+    <MudTextArea T="string" @bind-Value="_json" Lines="10" ReadOnly="true" Class="mt-2" />
 </MudPaper>
 
 @code {
