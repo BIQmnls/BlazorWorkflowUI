@@ -7,10 +7,15 @@
     <MudSelect T="string" @bind-Value="_workflow.Trigger.ActivityType" Label="Trigger" Variant="Variant.Filled" Class="mb-2">
         @foreach (var option in _triggerOptions)
         {
-            <MudSelectItem Value="@option">@option</MudSelectItem>
+            <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
         }
     </MudSelect>
-    <MudTextField T="string" @bind-Value="_workflow.Trigger.Condition" Label="Condition" Variant="Variant.Filled" Class="mb-4" />
+    <MudSelect T="string" @bind-Value="_workflow.Trigger.Condition" Label="Condition" Variant="Variant.Filled" Class="mb-4">
+        @foreach (var option in _conditionOptions)
+        {
+            <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
+        }
+    </MudSelect>
 
     <MudDivider Class="mb-4" />
     <MudText Typo="Typo.h6">Steps</MudText>
@@ -25,7 +30,7 @@
                 <MudSelect T="string" @bind-Value="context.ActivityType">
                     @foreach (var option in _activityOptions)
                     {
-                        <MudSelectItem Value="@option">@option</MudSelectItem>
+                        <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
                     }
                 </MudSelect>
             </MudTd>
@@ -47,6 +52,7 @@
 
     private readonly List<string> _triggerOptions = new() { "Start", "Schedule", "Signal" };
     private readonly List<string> _activityOptions = new() { "WriteLine", "SendEmail", "Delay" };
+    private readonly List<string> _conditionOptions = new() { "Always", "OnEvent", "OnData" };
 
     void AddStep() => _workflow.Steps.Add(new StepModel());
 
