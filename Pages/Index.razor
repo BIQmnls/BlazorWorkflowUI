@@ -3,9 +3,9 @@
 @inject IWorkflowService WorkflowService
 
 <MudPaper Class="pa-4">
-    <MudTextField @bind-Value="_workflow.Name" Label="Workflow Name" Variant="Variant.Filled" Class="mb-2" />
-    <MudTextField @bind-Value="_workflow.Trigger.ActivityType" Label="Trigger" Variant="Variant.Filled" Class="mb-2" />
-    <MudTextField @bind-Value="_workflow.Trigger.Condition" Label="Condition" Variant="Variant.Filled" Class="mb-4" />
+    <MudTextField T="string" @bind-Value="_workflow.Name" Label="Workflow Name" Variant="Variant.Filled" Class="mb-2" />
+    <MudTextField T="string" @bind-Value="_workflow.Trigger.ActivityType" Label="Trigger" Variant="Variant.Filled" Class="mb-2" />
+    <MudTextField T="string" @bind-Value="_workflow.Trigger.Condition" Label="Condition" Variant="Variant.Filled" Class="mb-4" />
 
     <MudDivider Class="mb-4" />
     <MudText Typo="Typo.h6">Steps</MudText>
@@ -16,16 +16,16 @@
             <MudTh>Branches (IDs)</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd><MudTextField @bind-Value="context.ActivityType" /></MudTd>
-            <MudTd><MudNumericField @bind-Value="context.DelaySeconds" /></MudTd>
-            <MudTd><MudTextField @bind-Value="context.Branches" /></MudTd>
+            <MudTd><MudTextField T="string" @bind-Value="context.ActivityType" /></MudTd>
+            <MudTd><MudNumericField T="int?" @bind-Value="context.DelaySeconds" /></MudTd>
+            <MudTd><MudTextField T="string" @bind-Value="context.Branches" /></MudTd>
         </RowTemplate>
     </MudTable>
     <MudButton OnClick="AddStep" Variant="Variant.Filled" Color="Color.Primary" Class="mb-4">Add Step</MudButton>
 
     <MudDivider Class="mb-4" />
     <MudButton OnClick="Generate" Variant="Variant.Filled" Color="Color.Secondary" Class="mb-2">Generate JSON</MudButton>
-    <MudTextArea Value="@_json" Lines="10" ReadOnly="true" Class="mt-2" />
+    <MudTextArea T="string" Value="@_json" Lines="10" ReadOnly="true" Class="mt-2" />
 </MudPaper>
 
 @code {
