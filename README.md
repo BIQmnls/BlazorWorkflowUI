@@ -8,6 +8,8 @@ A Blazor WebAssembly client application for building workflows in Elsa 3 JSON fo
 - Specify branching by listing next step IDs.
 - Generate Elsa 3-like workflow JSON.
 
+## Build
+=======
 This repository includes a `global.json` file that pins the .NET SDK to
 version 7.0.x. Ensure the matching SDK is installed before building.
 
