@@ -10,7 +10,7 @@
             <div class="activity-box">Condition: @step.Condition</div>
             <div class="branches">
                 <div class="branch">
-                    <div class="arrow">&#8600;</div>
+                    <div class="arrow">&#8601;</div>
                     <div class="activity-box">
                         @step.ActivityType
                         @if (step.ActivityType == "WaitForDocuments")
@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="branch">
-                    <div class="arrow">&#8601;</div>
+                    <div class="arrow">&#8600;</div>
                     <div class="activity-box">
                         @step.ElseActivityType
                         @if (step.ElseActivityType == "WaitForDocuments")
