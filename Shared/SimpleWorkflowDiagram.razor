@@ -1,3 +1,4 @@
+@using System.Linq
 @using BlazorWorkflowUI.Models
 
 <div class="workflow-diagram">
@@ -7,16 +8,28 @@
         <div class="arrow">&#8595;</div>
         if (step.ElseActivityType != null)
         {
-            <div class="activity-box">Condition: @step.Condition</div>
+            <div class="activity-box">
+                <MudSelect T="string" @bind-Value="step.Condition" Dense="true">
+                    @foreach (var option in ConditionOptions)
+                    {
+                        <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
+                    }
+                </MudSelect>
+            </div>
             <div class="branches">
                 <div class="branch">
                     <div class="arrow">&#8601;</div>
                     <div class="branch-label">Match</div>
                     <div class="activity-box">
-                        @step.ActivityType
+                        <MudSelect T="string" @bind-Value="step.ActivityType" Dense="true">
+                            @foreach (var option in ActivityOptions)
+                            {
+                                <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
+                            }
+                        </MudSelect>
                         @if (step.ActivityType == "WaitForDocuments")
                         {
-                            <div class="details">Wait: @step.DelaySeconds s</div>
+                            <MudNumericField T="int?" @bind-Value="step.DelaySeconds" Label="Seconds" Dense="true" />
                         }
                     </div>
                 </div>
@@ -24,10 +37,16 @@
                     <div class="arrow">&#8600;</div>
                     <div class="branch-label">No Match</div>
                     <div class="activity-box">
-                        @step.ElseActivityType
+                        <MudSelect T="string" @bind-Value="step.ElseActivityType" Dense="true">
+                            <MudSelectItem T="string" Value="@null">None</MudSelectItem>
+                            @foreach (var option in ActivityOptions)
+                            {
+                                <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
+                            }
+                        </MudSelect>
                         @if (step.ElseActivityType == "WaitForDocuments")
                         {
-                            <div class="details">Wait: @step.ElseDelaySeconds s</div>
+                            <MudNumericField T="int?" @bind-Value="step.ElseDelaySeconds" Label="Seconds" Dense="true" />
                         }
                     </div>
                 </div>
@@ -36,15 +55,30 @@
         else
         {
             <div class="activity-box">
-                <div>Condition: @step.Condition</div>
-                <div>@step.ActivityType</div>
+                <MudSelect T="string" @bind-Value="step.Condition" Dense="true">
+                    @foreach (var option in ConditionOptions)
+                    {
+                        <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="string" @bind-Value="step.ActivityType" Dense="true">
+                    @foreach (var option in ActivityOptions)
+                    {
+                        <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
+                    }
+                </MudSelect>
                 @if (step.ActivityType == "WaitForDocuments")
                 {
-                    <div class="details">Wait: @step.DelaySeconds s</div>
+                    <MudNumericField T="int?" @bind-Value="step.DelaySeconds" Label="Seconds" Dense="true" />
                 }
+                <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Add" OnClick="@(() => step.ElseActivityType = ActivityOptions.First())">
+                    Add Branch
+                </MudButton>
             </div>
         }
     }
+    <div class="arrow">&#8595;</div>
+    <MudButton OnClick="AddStep" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add">Add Step</MudButton>
 </div>
 
 <style>
@@ -89,4 +123,13 @@
 @code {
     [Parameter]
     public WorkflowModel Workflow { get; set; } = new();
+
+    [Parameter]
+    public List<string> ActivityOptions { get; set; } = new();
+
+    [Parameter]
+    public List<string> ConditionOptions { get; set; } = new();
+
+    void AddStep() => Workflow.Steps.Add(new StepModel());
 }
+
