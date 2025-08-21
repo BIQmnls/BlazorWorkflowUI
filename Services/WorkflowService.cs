@@ -10,14 +10,7 @@ public class WorkflowService : IWorkflowService
         var activities = new List<object>();
         var connections = new List<object>();
 
-        var triggerId = "trigger";
-        activities.Add(new
-        {
-            id = triggerId,
-            type = workflow.Trigger.ActivityType
-        });
-
-        var previousId = triggerId;
+        string? previousId = null;
         foreach (var step in workflow.Steps)
         {
             activities.Add(new
@@ -30,11 +23,20 @@ public class WorkflowService : IWorkflowService
                 elseDelay = step.ElseActivityType == "WaitForDocuments" ? step.ElseDelaySeconds : null
             });
 
-            connections.Add(new { source = previousId, target = step.Id });
+            if (previousId != null)
+            {
+                connections.Add(new { source = previousId, target = step.Id });
+            }
             previousId = step.Id;
         }
 
-        var data = new { name = workflow.Name, activities, connections };
+        var data = new
+        {
+            name = workflow.Name,
+            trigger = workflow.Trigger.ActivityType,
+            activities,
+            connections
+        };
         return JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
     }
 }

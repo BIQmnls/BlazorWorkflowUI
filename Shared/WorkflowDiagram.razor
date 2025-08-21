@@ -2,12 +2,8 @@
 @using BlazorWorkflowUI.Models
 
 <MudPaper Class="mt-2 pa-4">
+    <MudText Typo="Typo.subtitle1" Class="mb-2">Trigger: @Workflow.Trigger.ActivityType</MudText>
     <MudTimeline>
-        <MudTimelineItem Icon="@Icons.Material.Filled.PlayArrow">
-            <ChildContent>
-                <MudText>Trigger: @Workflow.Trigger.ActivityType</MudText>
-            </ChildContent>
-        </MudTimelineItem>
         @foreach (var step in Workflow.Steps)
         {
             <MudTimelineItem Icon="@Icons.Material.Filled.ChevronRight">
