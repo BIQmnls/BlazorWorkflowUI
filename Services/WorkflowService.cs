@@ -18,20 +18,18 @@ public class WorkflowService : IWorkflowService
             condition = workflow.Trigger.Condition
         });
 
-        if (workflow.Steps.Any())
-            connections.Add(new { source = triggerId, target = workflow.Steps.First().Id });
-
+        var previousId = triggerId;
         foreach (var step in workflow.Steps)
         {
             activities.Add(new
             {
                 id = step.Id,
                 type = step.ActivityType,
-                delay = step.DelaySeconds
+                delay = step.ActivityType == "Delay" ? step.DelaySeconds : null
             });
 
-            foreach (var next in step.NextStepIds)
-                connections.Add(new { source = step.Id, target = next });
+            connections.Add(new { source = previousId, target = step.Id });
+            previousId = step.Id;
         }
 
         var data = new { name = workflow.Name, activities, connections };

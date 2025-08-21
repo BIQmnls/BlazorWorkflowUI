@@ -2,9 +2,9 @@
 
 @inject IWorkflowService WorkflowService
 
-<MudPaper Class="pa-4">
-    <MudTextField T="string" @bind-Value="_workflow.Name" Label="Workflow Name" Variant="Variant.Filled" Class="mb-2" />
-    <MudSelect T="string" @bind-Value="_workflow.Trigger.ActivityType" Label="Trigger" Variant="Variant.Filled" Class="mb-2">
+<MudCard Class="pa-4 mx-auto my-4" Style="max-width:800px;">
+    <MudTextField T="string" @bind-Value="_workflow.Name" Label="Workflow Name" Variant="Variant.Filled" Class="mb-3" />
+    <MudSelect T="string" @bind-Value="_workflow.Trigger.ActivityType" Label="Trigger" Variant="Variant.Filled" Class="mb-3">
         @foreach (var option in _triggerOptions)
         {
             <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
@@ -18,12 +18,11 @@
     </MudSelect>
 
     <MudDivider Class="mb-4" />
-    <MudText Typo="Typo.h6">Steps</MudText>
-    <MudTable Items="_workflow.Steps" Class="mb-2">
+    <MudText Typo="Typo.h6" Class="mb-2">Steps</MudText>
+    <MudTable Items="_workflow.Steps" Class="mb-2" Dense="true">
         <HeaderContent>
             <MudTh>Activity</MudTh>
-            <MudTh>Delay (s)</MudTh>
-            <MudTh>Branches (IDs)</MudTh>
+            <MudTh>Details</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd>
@@ -34,16 +33,24 @@
                     }
                 </MudSelect>
             </MudTd>
-            <MudTd><MudNumericField T="int?" @bind-Value="context.DelaySeconds" /></MudTd>
-            <MudTd><MudTextField T="string" @bind-Value="context.Branches" /></MudTd>
+            <MudTd>
+                @if (context.ActivityType == "Delay")
+                {
+                    <MudNumericField T="int?" @bind-Value="context.DelaySeconds" Label="Seconds" />
+                }
+            </MudTd>
         </RowTemplate>
     </MudTable>
-    <MudButton OnClick="AddStep" Variant="Variant.Filled" Color="Color.Primary" Class="mb-4">Add Step</MudButton>
+    <MudButton OnClick="AddStep" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Class="mb-4">
+        Add Step
+    </MudButton>
 
     <MudDivider Class="mb-4" />
-    <MudButton OnClick="Generate" Variant="Variant.Filled" Color="Color.Secondary" Class="mb-2">Generate JSON</MudButton>
+    <MudButton OnClick="Generate" Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Code" Class="mb-2">
+        Generate JSON
+    </MudButton>
     <MudTextField T="string" @bind-Value="_json" Lines="10" ReadOnly="true" Class="mt-2" />
-</MudPaper>
+</MudCard>
 
 @code {
     protected WorkflowModel _workflow = new();
