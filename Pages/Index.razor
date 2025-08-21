@@ -4,14 +4,8 @@
 
 <MudCard Class="pa-4 mx-auto my-4" Style="max-width:800px;">
     <MudTextField T="string" @bind-Value="_workflow.Name" Label="Workflow Name" Variant="Variant.Filled" Class="mb-3" />
-    <MudSelect T="string" @bind-Value="_workflow.Trigger.ActivityType" Label="Trigger" Variant="Variant.Filled" Class="mb-3">
+    <MudSelect T="string" @bind-Value="_workflow.Trigger.ActivityType" Label="Trigger" Variant="Variant.Filled" Class="mb-4">
         @foreach (var option in _triggerOptions)
-        {
-            <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
-        }
-    </MudSelect>
-    <MudSelect T="string" @bind-Value="_workflow.Trigger.Condition" Label="Condition" Variant="Variant.Filled" Class="mb-4">
-        @foreach (var option in _conditionOptions)
         {
             <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
         }
