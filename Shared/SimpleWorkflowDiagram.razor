@@ -1,0 +1,86 @@
+@using BlazorWorkflowUI.Models
+
+<div class="workflow-diagram">
+    <div class="activity-box">Trigger: @Workflow.Trigger.ActivityType</div>
+    @foreach (var step in Workflow.Steps)
+    {
+        <div class="arrow">&#8595;</div>
+        if (step.ElseActivityType != null)
+        {
+            <div class="activity-box">Condition: @step.Condition</div>
+            <div class="branches">
+                <div class="branch">
+                    <div class="arrow">&#8600;</div>
+                    <div class="activity-box">
+                        @step.ActivityType
+                        @if (step.ActivityType == "WaitForDocuments")
+                        {
+                            <div class="details">Wait: @step.DelaySeconds s</div>
+                        }
+                    </div>
+                </div>
+                <div class="branch">
+                    <div class="arrow">&#8601;</div>
+                    <div class="activity-box">
+                        @step.ElseActivityType
+                        @if (step.ElseActivityType == "WaitForDocuments")
+                        {
+                            <div class="details">Wait: @step.ElseDelaySeconds s</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="activity-box">
+                <div>Condition: @step.Condition</div>
+                <div>@step.ActivityType</div>
+                @if (step.ActivityType == "WaitForDocuments")
+                {
+                    <div class="details">Wait: @step.DelaySeconds s</div>
+                }
+            </div>
+        }
+    }
+</div>
+
+<style>
+.workflow-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.activity-box {
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin: 4px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    min-width: 200px;
+    text-align: center;
+}
+.arrow {
+    font-size: 24px;
+}
+.branches {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+}
+.details {
+    font-size: 0.8em;
+    color: #666;
+}
+</style>
+
+@code {
+    [Parameter]
+    public WorkflowModel Workflow { get; set; } = new();
+}
