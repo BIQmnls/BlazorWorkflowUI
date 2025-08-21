@@ -18,6 +18,4 @@ public class StepModel
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public string ActivityType { get; set; } = "WriteLine";
     public int? DelaySeconds { get; set; }
-    public string Branches { get; set; } = string.Empty;
-    public IEnumerable<string> NextStepIds => Branches.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 }
