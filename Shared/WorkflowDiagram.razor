@@ -1,0 +1,38 @@
+@using Microsoft.AspNetCore.Components
+@using BlazorWorkflowUI.Models
+
+<MudPaper Class="mt-2 pa-4">
+    <MudTimeline>
+        <MudTimelineItem Icon="@Icons.Material.Filled.PlayArrow">
+            <ChildContent>
+                <MudText>Trigger: @Workflow.Trigger.ActivityType (@Workflow.Trigger.Condition)</MudText>
+            </ChildContent>
+        </MudTimelineItem>
+        @foreach (var step in Workflow.Steps)
+        {
+            <MudTimelineItem Icon="@Icons.Material.Filled.ChevronRight">
+                <ChildContent>
+                    <MudText>@step.ActivityType</MudText>
+                    <MudText Typo="Typo.caption">Condition: @step.Condition</MudText>
+                    @if (step.ActivityType == "Delay")
+                    {
+                        <MudText Typo="Typo.caption">Delay: @step.DelaySeconds s</MudText>
+                    }
+                    @if (step.ElseActivityType != null)
+                    {
+                        <MudText Typo="Typo.caption">Else: @step.ElseActivityType</MudText>
+                        @if (step.ElseActivityType == "Delay")
+                        {
+                            <MudText Typo="Typo.caption">Else Delay: @step.ElseDelaySeconds s</MudText>
+                        }
+                    }
+                </ChildContent>
+            </MudTimelineItem>
+        }
+    </MudTimeline>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public WorkflowModel Workflow { get; set; } = new();
+}

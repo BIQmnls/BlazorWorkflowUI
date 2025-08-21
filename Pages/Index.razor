@@ -75,13 +75,17 @@
     <MudButton OnClick="Generate" Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Code" Class="mb-2">
         Generate JSON
     </MudButton>
-    <MudTextField T="string" @bind-Value="_json" Lines="10" ReadOnly="true" Class="mt-2" />
+    @if (_showDiagram)
+    {
+        <WorkflowDiagram Workflow="_workflow" />
+    }
 </MudCard>
 
 @code {
     protected WorkflowModel _workflow = new();
 
     protected string? _json;
+    protected bool _showDiagram;
 
     private readonly List<string> _triggerOptions = new() { "Start", "Schedule", "Signal" };
     private readonly List<string> _activityOptions = new() { "WriteLine", "SendEmail", "Delay" };
@@ -89,5 +93,9 @@
 
     void AddStep() => _workflow.Steps.Add(new StepModel());
 
-    void Generate() => _json = WorkflowService.GenerateJson(_workflow);
+    void Generate()
+    {
+        _json = WorkflowService.GenerateJson(_workflow);
+        _showDiagram = true;
+    }
 }
