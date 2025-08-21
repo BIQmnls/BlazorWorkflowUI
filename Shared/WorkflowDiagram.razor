@@ -12,18 +12,36 @@
         {
             <MudTimelineItem Icon="@Icons.Material.Filled.ChevronRight">
                 <ChildContent>
-                    <MudText>@step.ActivityType</MudText>
                     <MudText Typo="Typo.caption">Condition: @step.Condition</MudText>
-                    @if (step.ActivityType == "WaitForDocuments")
-                    {
-                        <MudText Typo="Typo.caption">Wait: @step.DelaySeconds s</MudText>
-                    }
                     @if (step.ElseActivityType != null)
                     {
-                        <MudText Typo="Typo.caption">Else: @step.ElseActivityType</MudText>
-                        @if (step.ElseActivityType == "WaitForDocuments")
+                        <MudTimeline Dense="true" Class="ml-6">
+                            <MudTimelineItem Icon="@Icons.Material.Filled.Check">
+                                <ChildContent>
+                                    <MudText>@step.ActivityType</MudText>
+                                    @if (step.ActivityType == "WaitForDocuments")
+                                    {
+                                        <MudText Typo="Typo.caption">Wait: @step.DelaySeconds s</MudText>
+                                    }
+                                </ChildContent>
+                            </MudTimelineItem>
+                            <MudTimelineItem Icon="@Icons.Material.Filled.Close">
+                                <ChildContent>
+                                    <MudText>@step.ElseActivityType</MudText>
+                                    @if (step.ElseActivityType == "WaitForDocuments")
+                                    {
+                                        <MudText Typo="Typo.caption">Wait: @step.ElseDelaySeconds s</MudText>
+                                    }
+                                </ChildContent>
+                            </MudTimelineItem>
+                        </MudTimeline>
+                    }
+                    else
+                    {
+                        <MudText>@step.ActivityType</MudText>
+                        @if (step.ActivityType == "WaitForDocuments")
                         {
-                            <MudText Typo="Typo.caption">Else Wait: @step.ElseDelaySeconds s</MudText>
+                            <MudText Typo="Typo.caption">Wait: @step.DelaySeconds s</MudText>
                         }
                     }
                 </ChildContent>
