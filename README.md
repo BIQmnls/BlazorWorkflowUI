@@ -1,10 +1,10 @@
 # BlazorWorkflowUI
 
-A Blazor WebAssembly client application for building workflows in Elsa 3 JSON format. The UI uses [MudBlazor](https://mudblazor.com/) components (v6.11.2) to design workflows with triggers, optional conditions, steps, and delay activities.
+A Blazor WebAssembly client application for building workflows in Elsa 3 JSON format. The UI uses [MudBlazor](https://mudblazor.com/) components (v6.11.2) to design workflows with triggers, optional conditions, steps, and delay activities tailored for insurance and mortgage management.
 
 ## Features
-- Define workflow name, trigger, and condition.
-- Add multiple steps, including Delay steps.
+- Define workflow name, trigger, and condition with domain-specific options such as **PolicyCreated**, **PremiumDue**, and **MortgageApplicationSubmitted**.
+- Add multiple steps like **SendPolicyDocument**, **EvaluateMortgageApplication**, and **WaitForDocuments**.
 - Generate Elsa 3-like workflow JSON.
 
 ## Build

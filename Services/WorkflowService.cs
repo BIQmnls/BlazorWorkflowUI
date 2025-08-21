@@ -15,7 +15,7 @@ public class WorkflowService : IWorkflowService
         {
             id = triggerId,
             type = workflow.Trigger.ActivityType,
-            condition = workflow.Trigger.Condition
+            condition = workflow.Trigger.Condition == "NoCondition" ? null : workflow.Trigger.Condition
         });
 
         var previousId = triggerId;
@@ -25,10 +25,10 @@ public class WorkflowService : IWorkflowService
             {
                 id = step.Id,
                 type = step.ActivityType,
-                delay = step.ActivityType == "Delay" ? step.DelaySeconds : null,
-                condition = step.Condition == "Always" ? null : step.Condition,
+                delay = step.ActivityType == "WaitForDocuments" ? step.DelaySeconds : null,
+                condition = step.Condition == "NoCondition" ? null : step.Condition,
                 elseType = step.ElseActivityType,
-                elseDelay = step.ElseActivityType == "Delay" ? step.ElseDelaySeconds : null
+                elseDelay = step.ElseActivityType == "WaitForDocuments" ? step.ElseDelaySeconds : null
             });
 
             connections.Add(new { source = previousId, target = step.Id });
