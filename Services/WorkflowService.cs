@@ -14,8 +14,7 @@ public class WorkflowService : IWorkflowService
         activities.Add(new
         {
             id = triggerId,
-            type = workflow.Trigger.ActivityType,
-            condition = workflow.Trigger.Condition == "NoCondition" ? null : workflow.Trigger.Condition
+            type = workflow.Trigger.ActivityType
         });
 
         var previousId = triggerId;

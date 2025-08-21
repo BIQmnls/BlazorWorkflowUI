@@ -5,7 +5,7 @@
     <MudTimeline>
         <MudTimelineItem Icon="@Icons.Material.Filled.PlayArrow">
             <ChildContent>
-                <MudText>Trigger: @Workflow.Trigger.ActivityType (@Workflow.Trigger.Condition)</MudText>
+                <MudText>Trigger: @Workflow.Trigger.ActivityType</MudText>
             </ChildContent>
         </MudTimelineItem>
         @foreach (var step in Workflow.Steps)

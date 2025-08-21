@@ -10,7 +10,6 @@ public class WorkflowModel
 public class TriggerModel
 {
     public string ActivityType { get; set; } = "PolicyCreated";
-    public string Condition { get; set; } = "NoCondition";
 }
 
 public class StepModel
