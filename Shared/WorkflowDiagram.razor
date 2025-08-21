@@ -2,8 +2,8 @@
 @using BlazorWorkflowUI.Models
 
 <MudPaper Class="mt-2 pa-4">
-    <MudTimeline>
-        <MudTimelineItem Icon="@Icons.Material.Filled.PlayArrow">
+    <MudTimeline TimelinePosition="TimelinePosition.Left" TimelineAlign="TimelineAlign.Start">
+        <MudTimelineItem Icon="@Icons.Material.Filled.PlayArrow" >
             <ChildContent>
                 <MudText>Trigger: @Workflow.Trigger.ActivityType</MudText>
             </ChildContent>
