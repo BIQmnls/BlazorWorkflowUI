@@ -10,86 +10,24 @@
             <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
         }
     </MudSelect>
-
     <MudDivider Class="mb-4" />
-    <MudText Typo="Typo.h6" Class="mb-2">Steps</MudText>
-    <MudTable Items="_workflow.Steps" Class="mb-2" Dense="true">
-        <HeaderContent>
-            <MudTh>Condition</MudTh>
-            <MudTh>Match Activity</MudTh>
-            <MudTh>Match Details</MudTh>
-            <MudTh>No Match Activity</MudTh>
-            <MudTh>No Match Details</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd>
-                <MudSelect T="string" @bind-Value="context.Condition">
-                    @foreach (var option in _conditionOptions)
-                    {
-                        <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudTd>
-            <MudTd>
-                <MudSelect T="string" @bind-Value="context.ActivityType">
-                    @foreach (var option in _activityOptions)
-                    {
-                        <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudTd>
-            <MudTd>
-                @if (context.ActivityType == "WaitForDocuments")
-                {
-                    <MudNumericField T="int?" @bind-Value="context.DelaySeconds" Label="Seconds" />
-                }
-            </MudTd>
-            <MudTd>
-                <MudSelect T="string" @bind-Value="context.ElseActivityType">
-                    <MudSelectItem T="string" Value="@null">None</MudSelectItem>
-                    @foreach (var option in _activityOptions)
-                    {
-                        <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudTd>
-            <MudTd>
-                @if (context.ElseActivityType == "WaitForDocuments")
-                {
-                    <MudNumericField T="int?" @bind-Value="context.ElseDelaySeconds" Label="Seconds" />
-                }
-            </MudTd>
-        </RowTemplate>
-    </MudTable>
-    <MudButton OnClick="AddStep" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Class="mb-4">
-        Add Step
-    </MudButton>
-
+    <SimpleWorkflowDiagram Workflow="_workflow" ActivityOptions="_activityOptions" ConditionOptions="_conditionOptions" />
     <MudDivider Class="mb-4" />
     <MudButton OnClick="Generate" Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Code" Class="mb-2">
         Generate
     </MudButton>
-    @if (_showDiagram)
-    {
-        <SimpleWorkflowDiagram Workflow="_workflow" />
-    }
 </MudContainer>
 
 @code {
     protected WorkflowModel _workflow = new();
 
     protected string? _json;
-    protected bool _showDiagram;
-
     private readonly List<string> _triggerOptions = new() { "PolicyCreated", "PremiumDue", "MortgageApplicationSubmitted" };
     private readonly List<string> _activityOptions = new() { "SendPolicyDocument", "EvaluateMortgageApplication", "WaitForDocuments" };
     private readonly List<string> _conditionOptions = new() { "NoCondition", "PolicyActive", "LoanApproved" };
 
-    void AddStep() => _workflow.Steps.Add(new StepModel());
-
     void Generate()
     {
         _json = WorkflowService.GenerateJson(_workflow);
-        _showDiagram = true;
     }
 }
