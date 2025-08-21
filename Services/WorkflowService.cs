@@ -25,7 +25,10 @@ public class WorkflowService : IWorkflowService
             {
                 id = step.Id,
                 type = step.ActivityType,
-                delay = step.ActivityType == "Delay" ? step.DelaySeconds : null
+                delay = step.ActivityType == "Delay" ? step.DelaySeconds : null,
+                condition = step.Condition == "Always" ? null : step.Condition,
+                elseType = step.ElseActivityType,
+                elseDelay = step.ElseActivityType == "Delay" ? step.ElseDelaySeconds : null
             });
 
             connections.Add(new { source = previousId, target = step.Id });

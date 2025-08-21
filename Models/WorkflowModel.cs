@@ -18,4 +18,7 @@ public class StepModel
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public string ActivityType { get; set; } = "WriteLine";
     public int? DelaySeconds { get; set; }
+    public string Condition { get; set; } = "Always";
+    public string? ElseActivityType { get; set; }
+    public int? ElseDelaySeconds { get; set; }
 }
