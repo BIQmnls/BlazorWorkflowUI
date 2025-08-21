@@ -2,7 +2,7 @@
 
 @inject IWorkflowService WorkflowService
 
-<MudCard Class="pa-4 mx-auto my-4" Style="max-width:800px;">
+<MudContainer Class="pa-4 mx-auto my-4" >
     <MudTextField T="string" @bind-Value="_workflow.Name" Label="Workflow Name" Variant="Variant.Filled" Class="mb-3" />
     <MudSelect T="string" @bind-Value="_workflow.Trigger.ActivityType" Label="Trigger" Variant="Variant.Filled" Class="mb-4">
         @foreach (var option in _triggerOptions)
@@ -73,7 +73,7 @@
     {
         <WorkflowDiagram Workflow="_workflow" />
     }
-</MudCard>
+</MudContainer>
 
 @code {
     protected WorkflowModel _workflow = new();
