@@ -4,14 +4,8 @@
 
 <MudContainer Class="pa-4 mx-auto my-4" >
     <MudTextField T="string" @bind-Value="_workflow.Name" Label="Workflow Name" Variant="Variant.Filled" Class="mb-3" />
-    <MudSelect T="string" @bind-Value="_workflow.Trigger.ActivityType" Label="Trigger" Variant="Variant.Filled" Class="mb-4">
-        @foreach (var option in _triggerOptions)
-        {
-            <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
-        }
-    </MudSelect>
     <MudDivider Class="mb-4" />
-    <SimpleWorkflowDiagram Workflow="_workflow" ActivityOptions="_activityOptions" ConditionOptions="_conditionOptions" />
+    <SimpleWorkflowDiagram Workflow="_workflow" ActivityOptions="_activityOptions" ConditionOptions="_conditionOptions" TriggerOptions="_triggerOptions" />
     <MudDivider Class="mb-4" />
     <MudButton OnClick="Generate" Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Code" Class="mb-2">
         Generate
