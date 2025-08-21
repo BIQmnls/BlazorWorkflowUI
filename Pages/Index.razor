@@ -45,7 +45,7 @@
                 </MudSelect>
             </MudTd>
             <MudTd>
-                @if (context.ActivityType == "Delay")
+                @if (context.ActivityType == "WaitForDocuments")
                 {
                     <MudNumericField T="int?" @bind-Value="context.DelaySeconds" Label="Seconds" />
                 }
@@ -60,7 +60,7 @@
                 </MudSelect>
             </MudTd>
             <MudTd>
-                @if (context.ElseActivityType == "Delay")
+                @if (context.ElseActivityType == "WaitForDocuments")
                 {
                     <MudNumericField T="int?" @bind-Value="context.ElseDelaySeconds" Label="Seconds" />
                 }
@@ -87,9 +87,9 @@
     protected string? _json;
     protected bool _showDiagram;
 
-    private readonly List<string> _triggerOptions = new() { "Start", "Schedule", "Signal" };
-    private readonly List<string> _activityOptions = new() { "WriteLine", "SendEmail", "Delay" };
-    private readonly List<string> _conditionOptions = new() { "Always", "OnEvent", "OnData" };
+    private readonly List<string> _triggerOptions = new() { "PolicyCreated", "PremiumDue", "MortgageApplicationSubmitted" };
+    private readonly List<string> _activityOptions = new() { "SendPolicyDocument", "EvaluateMortgageApplication", "WaitForDocuments" };
+    private readonly List<string> _conditionOptions = new() { "NoCondition", "PolicyActive", "LoanApproved" };
 
     void AddStep() => _workflow.Steps.Add(new StepModel());
 

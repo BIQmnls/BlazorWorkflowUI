@@ -14,16 +14,16 @@
                 <ChildContent>
                     <MudText>@step.ActivityType</MudText>
                     <MudText Typo="Typo.caption">Condition: @step.Condition</MudText>
-                    @if (step.ActivityType == "Delay")
+                    @if (step.ActivityType == "WaitForDocuments")
                     {
-                        <MudText Typo="Typo.caption">Delay: @step.DelaySeconds s</MudText>
+                        <MudText Typo="Typo.caption">Wait: @step.DelaySeconds s</MudText>
                     }
                     @if (step.ElseActivityType != null)
                     {
                         <MudText Typo="Typo.caption">Else: @step.ElseActivityType</MudText>
-                        @if (step.ElseActivityType == "Delay")
+                        @if (step.ElseActivityType == "WaitForDocuments")
                         {
-                            <MudText Typo="Typo.caption">Else Delay: @step.ElseDelaySeconds s</MudText>
+                            <MudText Typo="Typo.caption">Else Wait: @step.ElseDelaySeconds s</MudText>
                         }
                     }
                 </ChildContent>
