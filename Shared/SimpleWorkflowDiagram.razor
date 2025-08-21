@@ -2,7 +2,14 @@
 @using BlazorWorkflowUI.Models
 
 <div class="workflow-diagram">
-    <div class="activity-box">Trigger: @Workflow.Trigger.ActivityType</div>
+    <div class="activity-box">
+        <MudSelect T="string" @bind-Value="Workflow.Trigger.ActivityType" Label="Trigger" Dense="true">
+            @foreach (var option in TriggerOptions)
+            {
+                <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
+            }
+        </MudSelect>
+    </div>
     @foreach (var step in Workflow.Steps)
     {
         <div class="arrow">&#8595;</div>
@@ -129,6 +136,9 @@
 
     [Parameter]
     public List<string> ConditionOptions { get; set; } = new();
+
+    [Parameter]
+    public List<string> TriggerOptions { get; set; } = new();
 
     void AddStep() => Workflow.Steps.Add(new StepModel());
 }
