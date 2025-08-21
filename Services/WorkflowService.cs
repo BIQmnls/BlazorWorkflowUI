@@ -10,14 +10,8 @@ public class WorkflowService : IWorkflowService
         var activities = new List<object>();
         var connections = new List<object>();
 
-        var triggerId = "trigger";
-        activities.Add(new
-        {
-            id = triggerId,
-            type = workflow.Trigger.ActivityType
-        });
+        string? previousId = null;
 
-        var previousId = triggerId;
         foreach (var step in workflow.Steps)
         {
             activities.Add(new
@@ -25,16 +19,40 @@ public class WorkflowService : IWorkflowService
                 id = step.Id,
                 type = step.ActivityType,
                 delay = step.ActivityType == "WaitForDocuments" ? step.DelaySeconds : null,
-                condition = step.Condition == "NoCondition" ? null : step.Condition,
-                elseType = step.ElseActivityType,
-                elseDelay = step.ElseActivityType == "WaitForDocuments" ? step.ElseDelaySeconds : null
+                condition = step.Condition == "NoCondition" ? null : step.Condition
             });
 
-            connections.Add(new { source = previousId, target = step.Id });
+            if (previousId != null)
+            {
+                connections.Add(new { source = previousId, target = step.Id });
+            }
+
+            if (step.ElseActivityType != null)
+            {
+                var elseId = $"{step.Id}-else";
+                activities.Add(new
+                {
+                    id = elseId,
+                    type = step.ElseActivityType,
+                    delay = step.ElseActivityType == "WaitForDocuments" ? step.ElseDelaySeconds : null
+                });
+
+                if (previousId != null)
+                {
+                    connections.Add(new { source = previousId, target = elseId });
+                }
+            }
+
             previousId = step.Id;
         }
 
-        var data = new { name = workflow.Name, activities, connections };
+        var data = new
+        {
+            name = workflow.Name,
+            trigger = workflow.Trigger.ActivityType,
+            activities,
+            connections
+        };
         return JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
     }
 }
