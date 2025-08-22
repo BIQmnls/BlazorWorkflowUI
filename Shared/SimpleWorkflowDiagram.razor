@@ -1,5 +1,6 @@
 @using System.Linq
 @using BlazorWorkflowUI.Models
+@using Microsoft.AspNetCore.Components.Forms
 
 <div class="workflow-diagram">
     <div class="activity-box">
@@ -38,6 +39,17 @@
                         {
                             <MudNumericField T="int?" @bind-Value="step.DelaySeconds" Label="Seconds" Dense="true" />
                         }
+                        <MudTextField T="string" @bind-Value="step.Text" Label="Text" Lines="3" Dense="true" />
+                        <InputFile OnChange="@(e => UploadFiles(e, step))" multiple accept="application/pdf,image/*,video/*,audio/*" />
+                        @if (step.Attachments.Any())
+                        {
+                            <ul class="attachment-list">
+                                @foreach (var file in step.Attachments)
+                                {
+                                    <li>@file.FileName <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" OnClick="@(() => RemoveFile(step, file))" /></li>
+                                }
+                            </ul>
+                        }
                     </div>
                 </div>
                 <div class="branch">
@@ -54,6 +66,17 @@
                         @if (step.ElseActivityType == "WaitForDocuments")
                         {
                             <MudNumericField T="int?" @bind-Value="step.ElseDelaySeconds" Label="Seconds" Dense="true" />
+                        }
+                        <MudTextField T="string" @bind-Value="step.ElseText" Label="Text" Lines="3" Dense="true" />
+                        <InputFile OnChange="@(e => UploadFiles(e, step, true))" multiple accept="application/pdf,image/*,video/*,audio/*" />
+                        @if (step.ElseAttachments.Any())
+                        {
+                            <ul class="attachment-list">
+                                @foreach (var file in step.ElseAttachments)
+                                {
+                                    <li>@file.FileName <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" OnClick="@(() => RemoveFile(step, file, true))" /></li>
+                                }
+                            </ul>
                         }
                     </div>
                 </div>
@@ -77,6 +100,17 @@
                 @if (step.ActivityType == "WaitForDocuments")
                 {
                     <MudNumericField T="int?" @bind-Value="step.DelaySeconds" Label="Seconds" Dense="true" />
+                }
+                <MudTextField T="string" @bind-Value="step.Text" Label="Text" Lines="3" Dense="true" />
+                <InputFile OnChange="@(e => UploadFiles(e, step))" multiple accept="application/pdf,image/*,video/*,audio/*" />
+                @if (step.Attachments.Any())
+                {
+                    <ul class="attachment-list">
+                        @foreach (var file in step.Attachments)
+                        {
+                            <li>@file.FileName <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" OnClick="@(() => RemoveFile(step, file))" /></li>
+                        }
+                    </ul>
                 }
                 <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Add" OnClick="@(() => step.ElseActivityType = ActivityOptions.First())">
                     Add Branch
@@ -128,6 +162,17 @@
     font-size: 0.8em;
     color: #666;
 }
+.attachment-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 4px;
+}
+.attachment-list li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
 </style>
 
 @code {
@@ -145,5 +190,39 @@
 
     void AddStep() => Workflow.Steps.Add(new StepModel());
     void RemoveStep(StepModel step) => Workflow.Steps.Remove(step);
+    async Task UploadFiles(InputFileChangeEventArgs e, StepModel step, bool isElse = false)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            var buffer = new byte[file.Size];
+            await file.OpenReadStream(10_000_000).ReadAsync(buffer);
+            var attachment = new StepAttachmentModel
+            {
+                FileName = file.Name,
+                ContentType = file.ContentType,
+                Data = buffer
+            };
+            if (isElse)
+            {
+                step.ElseAttachments.Add(attachment);
+            }
+            else
+            {
+                step.Attachments.Add(attachment);
+            }
+        }
+    }
+
+    void RemoveFile(StepModel step, StepAttachmentModel file, bool isElse = false)
+    {
+        if (isElse)
+        {
+            step.ElseAttachments.Remove(file);
+        }
+        else
+        {
+            step.Attachments.Remove(file);
+        }
+    }
 }
 
