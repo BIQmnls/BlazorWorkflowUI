@@ -83,6 +83,9 @@
                 </MudButton>
             </div>
         }
+        <MudButton Variant="Variant.Text" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveStep(step))">
+            Remove Step
+        </MudButton>
     }
     <div class="arrow">&#8595;</div>
     <MudButton OnClick="AddStep" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add">Add Step</MudButton>
@@ -141,5 +144,6 @@
     public List<string> TriggerOptions { get; set; } = new();
 
     void AddStep() => Workflow.Steps.Add(new StepModel());
+    void RemoveStep(StepModel step) => Workflow.Steps.Remove(step);
 }
 
