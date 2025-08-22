@@ -5,6 +5,8 @@ namespace BlazorWorkflowUI.Services;
 
 public class WorkflowService : IWorkflowService
 {
+    private readonly Dictionary<string, WorkflowModel> _store = new();
+
     public string GenerateJson(WorkflowModel workflow)
     {
         var activities = new List<object>();
@@ -54,5 +56,21 @@ public class WorkflowService : IWorkflowService
             connections
         };
         return JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
+    }
+
+    public void Save(WorkflowModel workflow)
+    {
+        _store[workflow.Name] = Clone(workflow);
+    }
+
+    public WorkflowModel? Load(string name)
+    {
+        return _store.TryGetValue(name, out var workflow) ? Clone(workflow) : null;
+    }
+
+    private static WorkflowModel Clone(WorkflowModel workflow)
+    {
+        var json = JsonSerializer.Serialize(workflow);
+        return JsonSerializer.Deserialize<WorkflowModel>(json) ?? new WorkflowModel();
     }
 }
