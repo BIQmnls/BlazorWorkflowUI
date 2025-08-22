@@ -7,9 +7,11 @@
     <MudDivider Class="mb-4" />
     <SimpleWorkflowDiagram Workflow="_workflow" ActivityOptions="_activityOptions" ConditionOptions="_conditionOptions" TriggerOptions="_triggerOptions" />
     <MudDivider Class="mb-4" />
-    <MudButton OnClick="Generate" Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Code" Class="mb-2">
-        Generate
-    </MudButton>
+    <MudStack Direction="Row" Spacing="1" Class="mb-2">
+        <MudButton OnClick="Save" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">Save</MudButton>
+        <MudButton OnClick="Load" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.FolderOpen">Load</MudButton>
+        <MudButton OnClick="Generate" Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Code">Generate</MudButton>
+    </MudStack>
 </MudContainer>
 
 @code {
@@ -23,5 +25,19 @@
     void Generate()
     {
         _json = WorkflowService.GenerateJson(_workflow);
+    }
+
+    void Save()
+    {
+        WorkflowService.Save(_workflow);
+    }
+
+    void Load()
+    {
+        var loaded = WorkflowService.Load(_workflow.Name);
+        if (loaded is not null)
+        {
+            _workflow = loaded;
+        }
     }
 }
