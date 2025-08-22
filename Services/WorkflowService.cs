@@ -1,5 +1,6 @@
 using System.Text.Json;
 using BlazorWorkflowUI.Models;
+using System.Linq;
 
 namespace BlazorWorkflowUI.Services;
 
@@ -21,7 +22,9 @@ public class WorkflowService : IWorkflowService
                 id = step.Id,
                 type = step.ActivityType,
                 delay = step.ActivityType == "WaitForDocuments" ? step.DelaySeconds : null,
-                condition = step.Condition == "NoCondition" ? null : step.Condition
+                condition = step.Condition == "NoCondition" ? null : step.Condition,
+                text = step.Text,
+                files = step.Attachments.Select(a => new { name = a.FileName, contentType = a.ContentType, data = Convert.ToBase64String(a.Data) })
             });
 
             if (previousId != null)
@@ -36,7 +39,9 @@ public class WorkflowService : IWorkflowService
                 {
                     id = elseId,
                     type = step.ElseActivityType,
-                    delay = step.ElseActivityType == "WaitForDocuments" ? step.ElseDelaySeconds : null
+                    delay = step.ElseActivityType == "WaitForDocuments" ? step.ElseDelaySeconds : null,
+                    text = step.ElseText,
+                    files = step.ElseAttachments.Select(a => new { name = a.FileName, contentType = a.ContentType, data = Convert.ToBase64String(a.Data) })
                 });
 
                 if (previousId != null)
