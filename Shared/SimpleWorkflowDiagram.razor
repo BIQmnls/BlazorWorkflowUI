@@ -1,4 +1,5 @@
 @using System.Linq
+@using System.Text.Json
 @using BlazorWorkflowUI.Models
 @using Microsoft.AspNetCore.Components.Forms
 
@@ -10,112 +11,56 @@
                 <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
             }
         </MudSelect>
+        <MudSelect T="string" @bind-Value="Workflow.Trigger.Condition" Label="Condition" Dense="true">
+            @foreach (var option in ConditionOptions)
+            {
+                <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
+            }
+        </MudSelect>
     </div>
     @foreach (var step in Workflow.Steps)
     {
         <div class="arrow">&#8595;</div>
-        if (step.ElseActivityType != null)
-        {
-            <div class="activity-box">
-                <MudSelect T="string" @bind-Value="step.Condition" Dense="true">
-                    @foreach (var option in ConditionOptions)
-                    {
-                        <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
-                    }
-                </MudSelect>
-            </div>
-            <div class="branches">
-                <div class="branch">
-                    <div class="arrow">&#8601;</div>
-                    <div class="branch-label">Match</div>
-                    <div class="activity-box">
-                        <MudSelect T="string" @bind-Value="step.ActivityType" Dense="true">
-                            @foreach (var option in ActivityOptions)
-                            {
-                                <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
-                            }
-                        </MudSelect>
-                        @if (step.ActivityType == "WaitForDocuments")
-                        {
-                            <MudNumericField T="int?" @bind-Value="step.DelaySeconds" Label="Seconds" Dense="true" />
-                        }
-                        <MudTextField T="string" @bind-Value="step.Text" Label="Text" Lines="3" Dense="true" />
-                        <InputFile OnChange="@(e => UploadFiles(e, step))" multiple accept="application/pdf,image/*,video/*,audio/*" />
-                        @if (step.Attachments.Any())
-                        {
-                            <ul class="attachment-list">
-                                @foreach (var file in step.Attachments)
-                                {
-                                    <li>@file.FileName <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" OnClick="@(() => RemoveFile(step, file))" /></li>
-                                }
-                            </ul>
-                        }
-                        <MudSelect T="string" @bind-Value="step.NextStepId" Label="Next Step" Dense="true">
-                            <MudSelectItem T="string" Value="@null">End</MudSelectItem>
-                            @foreach (var option in Workflow.Steps.Where(s => s.Id != step.Id))
-                            {
-                                <MudSelectItem T="string" Value="@option.Id">@GetStepLabel(option)</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </div>
-                </div>
-                <div class="branch">
-                    <div class="arrow">&#8600;</div>
-                    <div class="branch-label">No Match</div>
-                    <div class="activity-box">
-                        <MudSelect T="string" @bind-Value="step.ElseActivityType" Dense="true">
-                            <MudSelectItem T="string" Value="@null">None</MudSelectItem>
-                            @foreach (var option in ActivityOptions)
-                            {
-                                <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
-                            }
-                        </MudSelect>
-                        @if (step.ElseActivityType == "WaitForDocuments")
-                        {
-                            <MudNumericField T="int?" @bind-Value="step.ElseDelaySeconds" Label="Seconds" Dense="true" />
-                        }
-                        <MudTextField T="string" @bind-Value="step.ElseText" Label="Text" Lines="3" Dense="true" />
-                        <InputFile OnChange="@(e => UploadFiles(e, step, true))" multiple accept="application/pdf,image/*,video/*,audio/*" />
-                        @if (step.ElseAttachments.Any())
-                        {
-                            <ul class="attachment-list">
-                                @foreach (var file in step.ElseAttachments)
-                                {
-                                    <li>@file.FileName <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" OnClick="@(() => RemoveFile(step, file, true))" /></li>
-                                }
-                            </ul>
-                        }
-                        <MudSelect T="string" @bind-Value="step.ElseNextStepId" Label="Next Step" Dense="true">
-                            <MudSelectItem T="string" Value="@null">End</MudSelectItem>
-                            @foreach (var option in Workflow.Steps.Where(s => s.Id != step.Id))
-                            {
-                                <MudSelectItem T="string" Value="@option.Id">@GetStepLabel(option)</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </div>
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="activity-box">
-                <MudSelect T="string" @bind-Value="step.Condition" Dense="true">
-                    @foreach (var option in ConditionOptions)
-                    {
-                        <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
-                    }
-                </MudSelect>
-                <MudSelect T="string" @bind-Value="step.ActivityType" Dense="true">
-                    @foreach (var option in ActivityOptions)
-                    {
-                        <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
-                    }
-                </MudSelect>
-                @if (step.ActivityType == "WaitForDocuments")
+        <div class="activity-box">
+            <MudSelect T="string" @bind-Value="step.ActivityType" Dense="true">
+                @foreach (var option in ActivityOptions)
                 {
-                    <MudNumericField T="int?" @bind-Value="step.DelaySeconds" Label="Seconds" Dense="true" />
+                    <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
                 }
-                <MudTextField T="string" @bind-Value="step.Text" Label="Text" Lines="3" Dense="true" />
+                <MudSelectItem T="string" Value="Delay">Delay</MudSelectItem>
+                <MudSelectItem T="string" Value="Condition">Condition</MudSelectItem>
+            </MudSelect>
+
+            @if (step.ActivityType == "Delay")
+            {
+                <MudNumericField T="int?" Value="GetIntParam(step, \"Seconds\")" ValueChanged="v => SetParam(step, \"Seconds\", v)" Label="Seconds" Dense="true" />
+            }
+            else if (step.ActivityType == "Condition")
+            {
+                <MudSelect T="string" Value="GetStringParam(step, \"Condition\")" ValueChanged="v => SetParam(step, \"Condition\", v)" Dense="true">
+                    @foreach (var option in ConditionOptions)
+                    {
+                        <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="string" @bind-Value="step.NextStepId" Label="Match" Dense="true">
+                    <MudSelectItem T="string" Value="@null">End</MudSelectItem>
+                    @foreach (var option in Workflow.Steps.Where(s => s.Id != step.Id))
+                    {
+                        <MudSelectItem T="string" Value="@option.Id">@GetStepLabel(option)</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="string" @bind-Value="step.ElseNextStepId" Label="No Match" Dense="true">
+                    <MudSelectItem T="string" Value="@null">End</MudSelectItem>
+                    @foreach (var option in Workflow.Steps.Where(s => s.Id != step.Id))
+                    {
+                        <MudSelectItem T="string" Value="@option.Id">@GetStepLabel(option)</MudSelectItem>
+                    }
+                </MudSelect>
+            }
+            else
+            {
+                <MudTextField T="string" Value="GetStringParam(step, \"Text\")" ValueChanged="v => SetParam(step, \"Text\", v)" Label="Text" Lines="3" Dense="true" />
                 <InputFile OnChange="@(e => UploadFiles(e, step))" multiple accept="application/pdf,image/*,video/*,audio/*" />
                 @if (step.Attachments.Any())
                 {
@@ -133,14 +78,9 @@
                         <MudSelectItem T="string" Value="@option.Id">@GetStepLabel(option)</MudSelectItem>
                     }
                 </MudSelect>
-                <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Add" OnClick="@(() => { step.ElseActivityType = ActivityOptions.First(); step.ElseNextStepId = step.NextStepId; })">
-                    Add Branch
-                </MudButton>
-            </div>
-        }
-        <MudButton Variant="Variant.Text" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveStep(step))">
-            Remove Step
-        </MudButton>
+            }
+            <MudButton Variant="Variant.Text" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveStep(step))">Remove Step</MudButton>
+        </div>
     }
     <div class="arrow">&#8595;</div>
     <MudButton OnClick="AddStep" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add">Add Step</MudButton>
@@ -163,25 +103,6 @@
 }
 .arrow {
     font-size: 24px;
-}
-.branches {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-.branch {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-.branch-label {
-    font-size: 0.8em;
-    color: #666;
-    margin-bottom: 2px;
-}
-.details {
-    font-size: 0.8em;
-    color: #666;
 }
 .attachment-list {
     list-style-type: none;
@@ -208,29 +129,58 @@
 
     [Parameter]
     public List<string> TriggerOptions { get; set; } = new();
-    
+
     string GetStepLabel(StepModel step) => $"{Workflow.Steps.IndexOf(step) + 1}: {step.ActivityType}";
+
+    int? GetIntParam(StepModel step, string key)
+    {
+        if (step.Parameters.TryGetValue(key, out var value))
+        {
+            if (value is JsonElement je && je.ValueKind == JsonValueKind.Number)
+                return je.GetInt32();
+            if (value is int i)
+                return i;
+            if (int.TryParse(value?.ToString(), out var parsed))
+                return parsed;
+        }
+        return null;
+    }
+
+    string? GetStringParam(StepModel step, string key)
+    {
+        if (step.Parameters.TryGetValue(key, out var value))
+        {
+            if (value is JsonElement je && je.ValueKind == JsonValueKind.String)
+                return je.GetString();
+            return value?.ToString();
+        }
+        return null;
+    }
+
+    void SetParam(StepModel step, string key, object? value)
+    {
+        if (value == null)
+            step.Parameters.Remove(key);
+        else
+            step.Parameters[key] = value;
+    }
 
     void AddStep()
     {
         var newStep = new StepModel();
         if (Workflow.Steps.Any())
         {
-            var last = Workflow.Steps[Workflow.Steps.Count - 1];
-            if (last.ElseActivityType == null)
+            var last = Workflow.Steps[^1];
+            if (last.ActivityType == "Condition")
             {
-                last.NextStepId = newStep.Id;
+                if (string.IsNullOrEmpty(last.NextStepId))
+                    last.NextStepId = newStep.Id;
+                else if (string.IsNullOrEmpty(last.ElseNextStepId))
+                    last.ElseNextStepId = newStep.Id;
             }
             else
             {
-                if (string.IsNullOrEmpty(last.NextStepId))
-                {
-                    last.NextStepId = newStep.Id;
-                }
-                if (string.IsNullOrEmpty(last.ElseNextStepId))
-                {
-                    last.ElseNextStepId = newStep.Id;
-                }
+                last.NextStepId = newStep.Id;
             }
         }
         Workflow.Steps.Add(newStep);
@@ -242,48 +192,29 @@
         foreach (var s in Workflow.Steps)
         {
             if (s.NextStepId == step.Id)
-            {
                 s.NextStepId = null;
-            }
             if (s.ElseNextStepId == step.Id)
-            {
                 s.ElseNextStepId = null;
-            }
         }
     }
-    async Task UploadFiles(InputFileChangeEventArgs e, StepModel step, bool isElse = false)
+
+    async Task UploadFiles(InputFileChangeEventArgs e, StepModel step)
     {
         foreach (var file in e.GetMultipleFiles())
         {
             var buffer = new byte[file.Size];
             await file.OpenReadStream(10_000_000).ReadAsync(buffer);
-            var attachment = new StepAttachmentModel
+            step.Attachments.Add(new StepAttachmentModel
             {
                 FileName = file.Name,
                 ContentType = file.ContentType,
                 Data = buffer
-            };
-            if (isElse)
-            {
-                step.ElseAttachments.Add(attachment);
-            }
-            else
-            {
-                step.Attachments.Add(attachment);
-            }
+            });
         }
     }
 
-    void RemoveFile(StepModel step, StepAttachmentModel file, bool isElse = false)
+    void RemoveFile(StepModel step, StepAttachmentModel file)
     {
-        if (isElse)
-        {
-            step.ElseAttachments.Remove(file);
-        }
-        else
-        {
-            step.Attachments.Remove(file);
-        }
+        step.Attachments.Remove(file);
     }
 }
-

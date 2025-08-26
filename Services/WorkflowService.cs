@@ -20,9 +20,7 @@ public class WorkflowService : IWorkflowService
             {
                 id = step.Id,
                 type = step.ActivityType,
-                delay = step.ActivityType == "WaitForDocuments" ? step.DelaySeconds : null,
-                condition = step.Condition == "NoCondition" ? null : step.Condition,
-                text = step.Text,
+                parameters = step.Parameters,
                 files = step.Attachments.Select(a => new { name = a.FileName, contentType = a.ContentType, data = Convert.ToBase64String(a.Data) })
             });
 
@@ -32,30 +30,16 @@ public class WorkflowService : IWorkflowService
                 connections.Add(new { source = step.Id, target = nextId });
             }
 
-            if (step.ElseActivityType != null)
+            if (step.ElseNextStepId != null)
             {
-                var elseId = $"{step.Id}-else";
-                activities.Add(new
-                {
-                    id = elseId,
-                    type = step.ElseActivityType,
-                    delay = step.ElseActivityType == "WaitForDocuments" ? step.ElseDelaySeconds : null,
-                    text = step.ElseText,
-                    files = step.ElseAttachments.Select(a => new { name = a.FileName, contentType = a.ContentType, data = Convert.ToBase64String(a.Data) })
-                });
-
-                var elseNextId = step.ElseNextStepId ?? workflow.Steps.ElementAtOrDefault(i + 1)?.Id;
-                if (elseNextId != null)
-                {
-                    connections.Add(new { source = elseId, target = elseNextId });
-                }
+                connections.Add(new { source = step.Id, target = step.ElseNextStepId });
             }
         }
 
         var data = new
         {
             name = workflow.Name,
-            trigger = workflow.Trigger.ActivityType,
+            trigger = new { type = workflow.Trigger.ActivityType, condition = workflow.Trigger.Condition == "NoCondition" ? null : workflow.Trigger.Condition },
             activities,
             connections
         };
