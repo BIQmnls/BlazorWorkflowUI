@@ -50,6 +50,13 @@
                                 }
                             </ul>
                         }
+                        <MudSelect T="string" @bind-Value="step.NextStepId" Label="Next Step" Dense="true">
+                            <MudSelectItem T="string" Value="@null">End</MudSelectItem>
+                            @foreach (var option in Workflow.Steps.Where(s => s.Id != step.Id))
+                            {
+                                <MudSelectItem T="string" Value="@option.Id">@GetStepLabel(option)</MudSelectItem>
+                            }
+                        </MudSelect>
                     </div>
                 </div>
                 <div class="branch">
@@ -78,6 +85,13 @@
                                 }
                             </ul>
                         }
+                        <MudSelect T="string" @bind-Value="step.ElseNextStepId" Label="Next Step" Dense="true">
+                            <MudSelectItem T="string" Value="@null">End</MudSelectItem>
+                            @foreach (var option in Workflow.Steps.Where(s => s.Id != step.Id))
+                            {
+                                <MudSelectItem T="string" Value="@option.Id">@GetStepLabel(option)</MudSelectItem>
+                            }
+                        </MudSelect>
                     </div>
                 </div>
             </div>
@@ -112,7 +126,14 @@
                         }
                     </ul>
                 }
-                <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Add" OnClick="@(() => step.ElseActivityType = ActivityOptions.First())">
+                <MudSelect T="string" @bind-Value="step.NextStepId" Label="Next Step" Dense="true">
+                    <MudSelectItem T="string" Value="@null">End</MudSelectItem>
+                    @foreach (var option in Workflow.Steps.Where(s => s.Id != step.Id))
+                    {
+                        <MudSelectItem T="string" Value="@option.Id">@GetStepLabel(option)</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Add" OnClick="@(() => { step.ElseActivityType = ActivityOptions.First(); step.ElseNextStepId = step.NextStepId; })">
                     Add Branch
                 </MudButton>
             </div>
@@ -187,9 +208,49 @@
 
     [Parameter]
     public List<string> TriggerOptions { get; set; } = new();
+    
+    string GetStepLabel(StepModel step) => $"{Workflow.Steps.IndexOf(step) + 1}: {step.ActivityType}";
 
-    void AddStep() => Workflow.Steps.Add(new StepModel());
-    void RemoveStep(StepModel step) => Workflow.Steps.Remove(step);
+    void AddStep()
+    {
+        var newStep = new StepModel();
+        if (Workflow.Steps.Any())
+        {
+            var last = Workflow.Steps[Workflow.Steps.Count - 1];
+            if (last.ElseActivityType == null)
+            {
+                last.NextStepId = newStep.Id;
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(last.NextStepId))
+                {
+                    last.NextStepId = newStep.Id;
+                }
+                if (string.IsNullOrEmpty(last.ElseNextStepId))
+                {
+                    last.ElseNextStepId = newStep.Id;
+                }
+            }
+        }
+        Workflow.Steps.Add(newStep);
+    }
+
+    void RemoveStep(StepModel step)
+    {
+        Workflow.Steps.Remove(step);
+        foreach (var s in Workflow.Steps)
+        {
+            if (s.NextStepId == step.Id)
+            {
+                s.NextStepId = null;
+            }
+            if (s.ElseNextStepId == step.Id)
+            {
+                s.ElseNextStepId = null;
+            }
+        }
+    }
     async Task UploadFiles(InputFileChangeEventArgs e, StepModel step, bool isElse = false)
     {
         foreach (var file in e.GetMultipleFiles())
