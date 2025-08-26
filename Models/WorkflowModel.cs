@@ -10,20 +10,15 @@ public class WorkflowModel
 public class TriggerModel
 {
     public string ActivityType { get; set; } = "PolicyCreated";
+    public string Condition { get; set; } = "NoCondition";
 }
 
 public class StepModel
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public string ActivityType { get; set; } = "SendPolicyDocument";
-    public int? DelaySeconds { get; set; }
-    public string Condition { get; set; } = "NoCondition";
-    public string? ElseActivityType { get; set; }
-    public int? ElseDelaySeconds { get; set; }
-    public string? Text { get; set; }
+    public Dictionary<string, object> Parameters { get; set; } = new();
     public List<StepAttachmentModel> Attachments { get; set; } = new();
-    public string? ElseText { get; set; }
-    public List<StepAttachmentModel> ElseAttachments { get; set; } = new();
     public string? NextStepId { get; set; }
     public string? ElseNextStepId { get; set; }
 }

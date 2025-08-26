@@ -18,7 +18,7 @@
 
     protected string? _json;
     private readonly List<string> _triggerOptions = new() { "PolicyCreated", "PremiumDue", "MortgageApplicationSubmitted" };
-    private readonly List<string> _activityOptions = new() { "SendPolicyDocument", "EvaluateMortgageApplication", "WaitForDocuments" };
+    private readonly List<string> _activityOptions = new() { "SendPolicyDocument", "EvaluateMortgageApplication" };
     private readonly List<string> _conditionOptions = new() { "NoCondition", "PolicyActive", "LoanApproved" };
 
     void Generate()
