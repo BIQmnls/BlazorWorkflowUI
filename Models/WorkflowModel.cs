@@ -24,6 +24,8 @@ public class StepModel
     public List<StepAttachmentModel> Attachments { get; set; } = new();
     public string? ElseText { get; set; }
     public List<StepAttachmentModel> ElseAttachments { get; set; } = new();
+    public string? NextStepId { get; set; }
+    public string? ElseNextStepId { get; set; }
 }
 
 public class StepAttachmentModel

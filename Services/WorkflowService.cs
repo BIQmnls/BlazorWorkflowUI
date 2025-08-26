@@ -13,10 +13,9 @@ public class WorkflowService : IWorkflowService
         var activities = new List<object>();
         var connections = new List<object>();
 
-        string? previousId = null;
-
-        foreach (var step in workflow.Steps)
+        for (int i = 0; i < workflow.Steps.Count; i++)
         {
+            var step = workflow.Steps[i];
             activities.Add(new
             {
                 id = step.Id,
@@ -27,9 +26,10 @@ public class WorkflowService : IWorkflowService
                 files = step.Attachments.Select(a => new { name = a.FileName, contentType = a.ContentType, data = Convert.ToBase64String(a.Data) })
             });
 
-            if (previousId != null)
+            var nextId = step.NextStepId ?? workflow.Steps.ElementAtOrDefault(i + 1)?.Id;
+            if (nextId != null)
             {
-                connections.Add(new { source = previousId, target = step.Id });
+                connections.Add(new { source = step.Id, target = nextId });
             }
 
             if (step.ElseActivityType != null)
@@ -44,13 +44,12 @@ public class WorkflowService : IWorkflowService
                     files = step.ElseAttachments.Select(a => new { name = a.FileName, contentType = a.ContentType, data = Convert.ToBase64String(a.Data) })
                 });
 
-                if (previousId != null)
+                var elseNextId = step.ElseNextStepId ?? workflow.Steps.ElementAtOrDefault(i + 1)?.Id;
+                if (elseNextId != null)
                 {
-                    connections.Add(new { source = previousId, target = elseId });
+                    connections.Add(new { source = elseId, target = elseNextId });
                 }
             }
-
-            previousId = step.Id;
         }
 
         var data = new
