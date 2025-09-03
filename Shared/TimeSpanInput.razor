@@ -1,0 +1,43 @@
+<MudStack Direction="Row" Spacing="1">
+    <MudNumericField T="int" Value="_amount" ValueChanged="OnAmountChanged" Label="Amount" Min="0" Immediate="true" />
+    <MudSelect T="string" Value="_unit" ValueChanged="OnUnitChanged" Label="Unit">
+        <MudSelectItem T="string" Value="Minutes">Minutes</MudSelectItem>
+        <MudSelectItem T="string" Value="Hours">Hours</MudSelectItem>
+        <MudSelectItem T="string" Value="Days">Days</MudSelectItem>
+    </MudSelect>
+</MudStack>
+
+@code {
+    private int _amount;
+    private string _unit = "Minutes";
+
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+
+    protected override Task OnInitializedAsync() => UpdateValue();
+
+    private Task OnAmountChanged(int value)
+    {
+        _amount = value;
+        return UpdateValue();
+    }
+
+    private Task OnUnitChanged(string value)
+    {
+        _unit = value;
+        return UpdateValue();
+    }
+
+    private Task UpdateValue()
+    {
+        var ts = _unit switch
+        {
+            "Minutes" => TimeSpan.FromMinutes(_amount),
+            "Hours" => TimeSpan.FromHours(_amount),
+            "Days" => TimeSpan.FromDays(_amount),
+            _ => TimeSpan.Zero
+        };
+        Value = ts.ToString();
+        return ValueChanged.InvokeAsync(Value);
+    }
+}
