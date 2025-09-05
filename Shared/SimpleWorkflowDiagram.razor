@@ -3,8 +3,8 @@
 @using BlazorWorkflowUI.Models
 @using Microsoft.AspNetCore.Components.Forms
 
-<div class="workflow-diagram">
-    <div class="activity-box">
+<MudStack Class="workflow-diagram" AlignItems="AlignItems.Center" Spacing="2">
+    <MudPaper Class="activity-box p-4">
         <MudSelect T="string" @bind-Value="Workflow.Trigger.ActivityType" Label="Trigger" Dense="true">
             @foreach (var option in TriggerOptions)
             {
@@ -17,11 +17,11 @@
                 <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
             }
         </MudSelect>
-    </div>
+    </MudPaper>
     @foreach (var step in Workflow.Steps)
     {
-        <div class="arrow">&#8595;</div>
-        <div class="activity-box">
+        <MudIcon Icon="@Icons.Material.Filled.ArrowDownward" Class="arrow" />
+        <MudPaper Class="activity-box p-4">
             <MudSelect T="string" @bind-Value="step.ActivityType" Dense="true">
                 @foreach (var option in ActivityOptions)
                 {
@@ -80,11 +80,11 @@
                 </MudSelect>
             }
             <MudButton Variant="Variant.Text" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveStep(step))">Remove Step</MudButton>
-        </div>
+        </MudPaper>
     }
-    <div class="arrow">&#8595;</div>
+    <MudIcon Icon="@Icons.Material.Filled.ArrowDownward" Class="arrow" />
     <MudButton OnClick="AddStep" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add">Add Step</MudButton>
-</div>
+</MudStack>
 
 <style>
 .workflow-diagram {
@@ -93,11 +93,6 @@
     align-items: center;
 }
 .activity-box {
-    border: 1px solid #ccc;
-    padding: 8px;
-    margin: 4px;
-    border-radius: 4px;
-    background-color: #f9f9f9;
     min-width: 200px;
     text-align: center;
 }

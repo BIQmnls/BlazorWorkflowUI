@@ -2,15 +2,17 @@
 
 @inject IWorkflowService WorkflowService
 
-<MudContainer Class="pa-4 mx-auto my-4" >
-    <MudTextField T="string" @bind-Value="_workflow.Name" Label="Workflow Name" Variant="Variant.Filled" Class="mb-3" />
-    <MudDivider Class="mb-4" />
-    <SimpleWorkflowDiagram Workflow="_workflow" ActivityOptions="_activityOptions" ConditionOptions="_conditionOptions" TriggerOptions="_triggerOptions" />
-    <MudDivider Class="mb-4" />
-    <MudStack Direction="Row" Spacing="1" Class="mb-2">
-        <MudButton OnClick="Save" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">Save</MudButton>
-        <MudButton OnClick="Load" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.FolderOpen">Load</MudButton>
-    </MudStack>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mx-auto my-4">
+    <MudPaper Class="p-6">
+        <MudTextField T="string" @bind-Value="_workflow.Name" Label="Workflow Name" Placeholder="Enter a workflow name" Variant="Variant.Filled" Class="mb-4" />
+        <MudDivider Class="my-4" />
+        <SimpleWorkflowDiagram Workflow="_workflow" ActivityOptions="_activityOptions" ConditionOptions="_conditionOptions" TriggerOptions="_triggerOptions" />
+        <MudDivider Class="my-4" />
+        <MudStack Direction="Row" Spacing="1" Justify="flex-end">
+            <MudButton OnClick="Save" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">Save</MudButton>
+            <MudButton OnClick="Load" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.FolderOpen">Load</MudButton>
+        </MudStack>
+    </MudPaper>
 </MudContainer>
 
 @code {
