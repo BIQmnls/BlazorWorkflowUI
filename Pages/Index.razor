@@ -1,8 +1,11 @@
 @page "/"
 
 @inject IWorkflowService WorkflowService
+@inject ISnackbar Snackbar
 
 <MudContainer Class="pa-4 mx-auto my-4" >
+    <MudText Typo="Typo.h4" Class="mb-2">Workflow Builder</MudText>
+    <MudText Class="mb-4">Enter a workflow name, configure the steps below, then save or load your workflow.</MudText>
     <MudTextField T="string" @bind-Value="_workflow.Name" Label="Workflow Name" Variant="Variant.Filled" Class="mb-3" />
     <MudDivider Class="mb-4" />
     <SimpleWorkflowDiagram Workflow="_workflow" ActivityOptions="_activityOptions" ConditionOptions="_conditionOptions" TriggerOptions="_triggerOptions" />
@@ -29,6 +32,7 @@
     void Save()
     {
         WorkflowService.Save(_workflow);
+        Snackbar.Add("Workflow saved", Severity.Success);
     }
 
     void Load()
@@ -37,6 +41,11 @@
         if (loaded is not null)
         {
             _workflow = loaded;
+            Snackbar.Add("Workflow loaded", Severity.Info);
+        }
+        else
+        {
+            Snackbar.Add("Workflow not found", Severity.Error);
         }
     }
 }
