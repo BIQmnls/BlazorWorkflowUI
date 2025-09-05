@@ -15,45 +15,34 @@
     [Parameter] public string? Value { get; set; }
     [Parameter] public EventCallback<string?> ValueChanged { get; set; }
 
-    protected override void OnInitialized()
-    {
-        UpdateFromValue();
-        _lastValue = Value;
-    }
-
     protected override void OnParametersSet()
     {
         if (_lastValue != Value)
         {
             _lastValue = Value;
-            UpdateFromValue();
-        }
-    }
-
-    private void UpdateFromValue()
-    {
-        if (Value != null && TimeSpan.TryParse(Value, out var ts))
-        {
-            if (ts.TotalDays >= 1 && ts.TotalDays % 1 == 0)
+            if (Value != null && TimeSpan.TryParse(Value, out var ts))
             {
-                _unit = "Days";
-                _amount = (int)ts.TotalDays;
-            }
-            else if (ts.TotalHours >= 1 && ts.TotalHours % 1 == 0)
-            {
-                _unit = "Hours";
-                _amount = (int)ts.TotalHours;
+                if (ts.TotalDays >= 1 && ts.TotalDays % 1 == 0)
+                {
+                    _unit = "Days";
+                    _amount = (int)ts.TotalDays;
+                }
+                else if (ts.TotalHours >= 1 && ts.TotalHours % 1 == 0)
+                {
+                    _unit = "Hours";
+                    _amount = (int)ts.TotalHours;
+                }
+                else
+                {
+                    _unit = "Minutes";
+                    _amount = (int)ts.TotalMinutes;
+                }
             }
             else
             {
                 _unit = "Minutes";
-                _amount = (int)ts.TotalMinutes;
+                _amount = 0;
             }
-        }
-        else
-        {
-            _unit = "Minutes";
-            _amount = 0;
         }
     }
 
