@@ -61,7 +61,7 @@
                     @if (step is ActionStep act)
                     {
                         <MudSelect T="string" @bind-Value="act.NextStepId" Label="Next">
-                            <MudSelectItem Value="">-- None --</MudSelectItem>
+                            <MudSelectItem Value="0">-- None --</MudSelectItem>
                             @foreach (var s in Workflow.Steps.Where(s => s.Id != step.Id))
                             {
                                 <MudSelectItem Value="@s.Id">@s.Title</MudSelectItem>
@@ -71,14 +71,14 @@
                     else if (step is ConditionStep cond)
                     {
                         <MudSelect T="string" @bind-Value="cond.TrueStepId" Label="True">
-                            <MudSelectItem Value="">-- None --</MudSelectItem>
+                            <MudSelectItem Value="0">-- None --</MudSelectItem>
                             @foreach (var s in Workflow.Steps.Where(s => s.Id != step.Id))
                             {
                                 <MudSelectItem Value="@s.Id">@s.Title</MudSelectItem>
                             }
                         </MudSelect>
                         <MudSelect T="string" @bind-Value="cond.FalseStepId" Label="False">
-                            <MudSelectItem Value="">-- None --</MudSelectItem>
+                            <MudSelectItem Value="0">-- None --</MudSelectItem>
                             @foreach (var s in Workflow.Steps.Where(s => s.Id != step.Id))
                             {
                                 <MudSelectItem Value="@s.Id">@s.Title</MudSelectItem>
@@ -99,6 +99,6 @@
         </MudStack>
 
         <MudDivider Class="my-4" />
-        <MudButton OnClick="Save" Variant="Filled" Color="Color.Primary">Save Workflow</MudButton>
+        <MudButton OnClick="Save" Variant="Variant.Filled" Color="Color.Primary">Save Workflow</MudButton>
     </MudForm>
 </MudContainer>

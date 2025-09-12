@@ -5,9 +5,9 @@
 
 <MudContainer MaxWidth="MaxWidth.False">
     <MudStack Spacing="2">
-        <MudStack Direction="Row" Justify="Space-between" AlignItems="Center">
+        <MudStack Direction="Row" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
             <MudText Typo="Typo.h4">Workflows</MudText>
-            <MudButton Variant="Filled" Color="Color.Primary" OnClick="@CreateWorkflow">New Workflow</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateWorkflow">New Workflow</MudButton>
         </MudStack>
 
         <MudTable Items="_workflows" Hover="true">
@@ -20,7 +20,7 @@
                 <MudTd>@context.Name</MudTd>
                 <MudTd>@context.Trigger.Name</MudTd>
                 <MudTd>
-                    <MudButton Size="Size.Small" Variant="Text" OnClick="@(() => EditWorkflow(context.Id))">Edit</MudButton>
+                    <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="@(() => EditWorkflow(context.Id))">Edit</MudButton>
                 </MudTd>
             </RowTemplate>
         </MudTable>
