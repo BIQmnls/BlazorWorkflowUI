@@ -1,0 +1,104 @@
+@page "/workflow/{id}"
+
+@inject WorkflowService WorkflowService
+@inject NavigationManager Nav
+
+@code {
+    [Parameter] public string? id { get; set; }
+
+    private Workflow Workflow = new();
+    private MudForm? form;
+    private string newStepTitle = string.Empty;
+    private StepType newStepType = StepType.Action;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(id))
+        {
+            var existing = await WorkflowService.GetWorkflowAsync(id);
+            Workflow = existing ?? new Workflow { Id = id };
+        }
+    }
+
+    private async Task Save()
+    {
+        if (form != null)
+        {
+            await form.Validate();
+            if (!form.IsValid)
+                return;
+        }
+        await WorkflowService.SaveWorkflowAsync(Workflow);
+        Nav.NavigateTo("/");
+    }
+
+    private void AddStep()
+    {
+        WorkflowStep step = newStepType == StepType.Action ? new ActionStep() : new ConditionStep();
+        step.Title = newStepTitle;
+        Workflow.Steps.Add(step);
+        newStepTitle = string.Empty;
+        newStepType = StepType.Action;
+    }
+
+    enum StepType { Action, Condition }
+}
+
+<MudContainer MaxWidth="MaxWidth.False">
+    <MudText Typo="Typo.h4">Workflow Editor</MudText>
+    <MudForm @ref="form">
+        <MudTextField @bind-Value="Workflow.Name" Label="Name" Required="true" />
+        <MudTextField @bind-Value="Workflow.Trigger.Name" Label="Trigger" Required="true" />
+
+        <MudDivider Class="my-4" />
+        <MudText Typo="Typo.h6">Steps</MudText>
+
+        <MudList Dense="true">
+            @foreach (var step in Workflow.Steps)
+            {
+                <MudListItem>
+                    <MudText>@step.Title (@step.GetType().Name)</MudText>
+                    @if (step is ActionStep act)
+                    {
+                        <MudSelect T="string" @bind-Value="act.NextStepId" Label="Next">
+                            <MudSelectItem Value="">-- None --</MudSelectItem>
+                            @foreach (var s in Workflow.Steps.Where(s => s.Id != step.Id))
+                            {
+                                <MudSelectItem Value="@s.Id">@s.Title</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                    else if (step is ConditionStep cond)
+                    {
+                        <MudSelect T="string" @bind-Value="cond.TrueStepId" Label="True">
+                            <MudSelectItem Value="">-- None --</MudSelectItem>
+                            @foreach (var s in Workflow.Steps.Where(s => s.Id != step.Id))
+                            {
+                                <MudSelectItem Value="@s.Id">@s.Title</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <MudSelect T="string" @bind-Value="cond.FalseStepId" Label="False">
+                            <MudSelectItem Value="">-- None --</MudSelectItem>
+                            @foreach (var s in Workflow.Steps.Where(s => s.Id != step.Id))
+                            {
+                                <MudSelectItem Value="@s.Id">@s.Title</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                </MudListItem>
+            }
+        </MudList>
+
+        <MudStack Direction="Row" Spacing="2" Class="mt-2">
+            <MudTextField @bind-Value="newStepTitle" Label="New Step Title" />
+            <MudSelect T="StepType" @bind-Value="newStepType" Label="Type">
+                <MudSelectItem Value="StepType.Action">Action</MudSelectItem>
+                <MudSelectItem Value="StepType.Condition">Branch</MudSelectItem>
+            </MudSelect>
+            <MudButton OnClick="AddStep" Disabled="string.IsNullOrWhiteSpace(newStepTitle)">Add</MudButton>
+        </MudStack>
+
+        <MudDivider Class="my-4" />
+        <MudButton OnClick="Save" Variant="Filled" Color="Color.Primary">Save Workflow</MudButton>
+    </MudForm>
+</MudContainer>

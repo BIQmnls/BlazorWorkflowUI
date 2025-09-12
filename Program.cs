@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
+builder.RootComponents.Add<App>('#app');
+builder.RootComponents.Add<HeadOutlet>('head::after');
 
 builder.Services.AddMudServices();
-builder.Services.AddSingleton<IWorkflowService, WorkflowService>();
+builder.Services.AddScoped<WorkflowService>();
 
 await builder.Build().RunAsync();
