@@ -1,21 +1,13 @@
 @inherits LayoutComponentBase
 
-<MudThemeProvider @bind-IsDarkMode="_isDarkMode" />
-<MudDialogProvider />
-<MudSnackbarProvider />
-
 <MudLayout>
-    <MudAppBar Color="Color.Primary" Elevation="1">
-        <MudText Typo="Typo.h6">Workflow Designer</MudText>
-        <MudSpacer />
-        <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" Color="Color.Inherit" OnClick="ToggleDarkMode" />
+    <MudAppBar Color="Color.Primary" Elevation="0">
+        <MudText Typo="Typo.h6">Workflow Builder</MudText>
     </MudAppBar>
+    <MudDrawer Open="true" ClipMode="DrawerClipMode.Always">
+        <NavMenu />
+    </MudDrawer>
     <MudMainContent>
         @Body
     </MudMainContent>
 </MudLayout>
-
-@code {
-    private bool _isDarkMode;
-    void ToggleDarkMode() => _isDarkMode = !_isDarkMode;
-}
